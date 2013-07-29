@@ -54,4 +54,8 @@
         </plugin>
     </plugins>
   </build>
+
+    <scm>
+        <connection>scm:git:https://github.com/finn-no/Yammer-Java-SDK.git</connection>
+    </scm>
 </project>
