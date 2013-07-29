@@ -109,7 +109,6 @@ public final class YammerClient implements Closeable {
             final String accessToken) throws IOException {
 
         HttpGet httpGet = new HttpGet(String.format(OAUTH_ACCESS_TOKEN_URL, applicationKey, applicationSecret, accessToken));
-        System.err.println("request " + httpGet);
         HttpResponse response = httpclient.execute(httpGet);
         if(200 == response.getStatusLine().getStatusCode()) {
             try {
