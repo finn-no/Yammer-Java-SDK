@@ -19,6 +19,11 @@
       <artifactId>httpclient</artifactId>
       <version>4.3-beta1</version>
     </dependency>
+    <dependency>
+      <groupId>org.httpunit</groupId>
+      <artifactId>httpunit</artifactId>
+      <version>1.7.2</version>
+    </dependency>
   </dependencies>
 
   <build>

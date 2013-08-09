@@ -1,4 +1,4 @@
-/** © Copyright 2013 FINN AS 
+/** © Copyright 2013 FINN AS
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU Lesser General Public License as published by
@@ -24,6 +24,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.meterware.httpunit.HttpUnitOptions;
+import com.meterware.httpunit.WebConversation;
+import com.meterware.httpunit.WebForm;
+import com.meterware.httpunit.WebResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -43,7 +47,7 @@ public final class YammerClient implements Closeable {
 	 * Restful Yammer URL for messages api.
 	 */
 	private static final String YAMMER_API_V1_MESSAGES = "https://www.yammer.com/api/v1/messages?access_token=%s";
-
+    private static final String OAUTH_GET_ACCESS_TOKEN_URL = "https://www.yammer.com/dialog/oauth?client_id=%s";
 	/**
 	 * Yammer URL for getting access token.
 	 */
@@ -64,16 +68,16 @@ public final class YammerClient implements Closeable {
      *
      * @param applicationKey The key of the application registered with Yammer. See http://www.yammer.com/client_applications/new
      * @param applicationSecret The secret of the application registered with Yammer. See http://www.yammer.com/client_applications/new
-     * @param accessCode The Yammer access code, needed for using the Yammer API. https://developer.yammer.com/authentication/#a-testtoken
      * @throws IOException
      */
     public YammerClient(
             final String applicationKey,
-            final String applicationSecret,
-            final String accessCode) throws IOException {
+            final String username,
+            final String password,
+            final String applicationSecret) throws IOException {
 
         httpclient = HttpClientBuilder.create().useSystemProperties().build();
-        this.accessAuthToken = getAccessTokenParameters(applicationKey, applicationSecret, accessCode);
+        this.accessAuthToken = getAccessTokenParameters(applicationKey, username, password, applicationSecret);
     }
 
 	public void sendMessage(final String group, final String message, final String... topics) throws IOException {
@@ -105,9 +109,11 @@ public final class YammerClient implements Closeable {
 
 	private String getAccessTokenParameters(
             final String applicationKey,
-            final String applicationSecret,
-            final String accessToken) throws IOException {
+            final String username,
+            final String password,
+            final String applicationSecret) throws IOException {
 
+        String accessToken = getAccesToken(applicationKey, username, password);
         HttpGet httpGet = new HttpGet(String.format(OAUTH_ACCESS_TOKEN_URL, applicationKey, applicationSecret, accessToken));
         HttpResponse response = httpclient.execute(httpGet);
         if(200 == response.getStatusLine().getStatusCode()) {
@@ -124,4 +130,33 @@ public final class YammerClient implements Closeable {
             throw new IOException("failed request: " + response);
         }
 	}
+
+    private String getAccesToken(
+            final String applicationKey,
+            final String username,
+            final String password) throws IOException {
+
+        try {
+            HttpUnitOptions.setScriptingEnabled(false);
+            WebConversation wc = new WebConversation();
+            WebResponse resp = wc.getResponse(String.format(OAUTH_GET_ACCESS_TOKEN_URL, applicationKey));
+            WebForm form = findLoginForm(resp.getForms());
+            form.setParameter("login", username);
+            form.setParameter("password", password);
+            resp = form.submit();
+            resp = resp.getLinkWith("Allow").click();
+            return resp.getURL().toString().split("code=")[1];
+        } catch (SAXException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    private WebForm findLoginForm(WebForm[] forms) throws IOException {
+        for(WebForm form : forms) {
+            if("login-form".equalsIgnoreCase(form.getID())) {
+                return form;
+            }
+        }
+        throw new IOException("No login form found on " + OAUTH_GET_ACCESS_TOKEN_URL);
+    }
 }
