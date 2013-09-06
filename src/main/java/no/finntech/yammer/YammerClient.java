@@ -144,7 +144,9 @@ public final class YammerClient implements Closeable {
             form.setParameter("login", username);
             form.setParameter("password", password);
             resp = form.submit();
-            resp = resp.getLinkWith("Allow").click();
+            if(!resp.getURL().toString().contains("code=")) {
+                resp = resp.getLinkWith("Allow").click();
+            }
             return resp.getURL().toString().split("code=")[1];
         } catch (SAXException ex) {
             throw new IOException(ex);
