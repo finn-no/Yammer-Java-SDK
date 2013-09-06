@@ -4,7 +4,7 @@
 
   <groupId>no.finntech.yammer</groupId>
   <artifactId>yammer-java-sdk</artifactId>
-  <version>0.3-SNAPSHOT</version>
+  <version>0.3</version>
   <packaging>jar</packaging>
 
   <properties>
@@ -61,6 +61,6 @@
 
     <scm>
         <connection>scm:git:https://github.com/finn-no/Yammer-Java-SDK.git</connection>
-      <tag>HEAD</tag>
+      <tag>yammer-java-sdk-0.3</tag>
   </scm>
 </project>
