@@ -51,7 +51,7 @@ public final class YammerClient implements Closeable {
 	/**
 	 * Yammer URL for getting access token.
 	 */
-	private static final String OAUTH_ACCESS_TOKEN_URL = "https://www.yammer.com/oauth2/access_token?client_id=%s&client_secret=%s&code=%s";
+	private static final String OAUTH_ACCESS_TOKEN_URL = "https://www.yammer.com/oauth2/access_token.xml?client_id=%s&client_secret=%s&code=%s";
 
 	private static final String MESSAGE_GROUP_ID_PARAM_NAME = "group_id";
 	private static final String MESSAGE_BODY_PARAM_NAME = "body";
