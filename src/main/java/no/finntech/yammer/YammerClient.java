@@ -46,7 +46,7 @@ public final class YammerClient implements Closeable {
 	/**
 	 * Restful Yammer URL for messages api.
 	 */
-	private static final String YAMMER_API_V1_MESSAGES = "https://www.yammer.com/api/v1/messages?access_token=%s";
+	private static final String YAMMER_API_V1_MESSAGES = "https://www.yammer.com/api/v1/messages";
     private static final String OAUTH_GET_ACCESS_TOKEN_URL = "https://www.yammer.com/dialog/oauth?client_id=%s";
 	/**
 	 * Yammer URL for getting access token.
@@ -82,7 +82,8 @@ public final class YammerClient implements Closeable {
 
 	public void sendMessage(final String group, final String message, final String... topics) throws IOException {
 
-        HttpPost httpPost = new HttpPost(String.format(YAMMER_API_V1_MESSAGES, accessAuthToken));
+        HttpPost httpPost = new HttpPost(YAMMER_API_V1_MESSAGES);
+        httpPost.addHeader("Authorization", "Bearer " + accessAuthToken);
 
         List<NameValuePair> nvps = new ArrayList<>();
         nvps.add(new BasicNameValuePair(MESSAGE_BODY_PARAM_NAME, message));
