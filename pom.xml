@@ -4,7 +4,7 @@
 
   <groupId>no.finntech.yammer</groupId>
   <artifactId>yammer-java-sdk</artifactId>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <properties>
